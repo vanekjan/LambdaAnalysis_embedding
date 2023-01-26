@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job nProcesses="1" simulateSubmission="false">
+    <command>
+
+        @ seed = &random; + $JOBINDEX
+
+        starver DEV
+        
+        mkdir output_starsim
+
+        root4star -b -q starsim.C\(&nevents;,&energy;,$seed,\"&config;\"\) > $JOBID.log
+
+    </command>
+    
+    <stdout URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.out" />
+    <stderr URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.err" />
+    <output fromScratch="./output_starsim/*.starsim.root"   toURL="file:&submitdir;/production/starsim/&productionId;/" />
+    <output fromScratch="./output_starsim/*.starsim.fzd"   toURL="file:&submitdir;/production/starsim/&productionId;/" />
+    <output fromScratch="*.log"            toURL="file:&submitdir;/jobs/starsim/&productionId;/"/>
+
+    <SandBox>
+        <Package>
+            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/StRoot</File>
+            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/.sl73_gcc485</File>
+            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/starsim.C</File>
+        </Package>
+    </SandBox>
+
+    <Generator>
+        <Location>&submitdir;/SubmitInfo</Location>
+    </Generator>
+</job>

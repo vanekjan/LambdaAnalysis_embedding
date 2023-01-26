@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job nProcesses="1" simulateSubmission="false">
+    <command>
+
+        starver DEV
+        
+        root4star -b -q bfcMixer.C\(&nevents;,\"&daqfile;\",\"&fzdfile;\",\"&config;\"\) > $JOBID.log
+
+    </command>
+    
+    <stdout URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.out" />
+    <stderr URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.err" />
+    <output fromScratch="*.root"   toURL="file:&submitdir;/production/bfc/&productionId;/" />
+    <output fromScratch="*.log"    toURL="file:&submitdir;/jobs/bfc/&productionId;/"/>
+
+    <SandBox>
+        <Package>
+            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfc_input</File>
+            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfcMixer.C</File>
+        </Package>
+    </SandBox>
+
+    <Generator>
+        <Location>&submitdir;/SubmitInfo</Location>
+    </Generator>
+</job>
