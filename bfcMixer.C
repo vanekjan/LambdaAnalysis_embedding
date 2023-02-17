@@ -34,16 +34,27 @@ void bfcMixer(const Int_t Nevents = 1,
 		  const Char_t* DbVoption = "")
 {
    
+   //check chain options at https://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
+   
    //Run12 pp500 RFF chain
    // Will not run without Sti !!!
   //  TString prodP13ibpp500RFF("DbV20130502 pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -evout -hitfilt");
-  TString prodP13ibpp500RFF("DbV20130502 DbV20160318_EMC_Calibrations Dbv20160318_TRG_Calibrations pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -evout -hitfilt");
+  //TString prodP13ibpp500RFF("DbV20130502 DbV20160318_EMC_Calibrations Dbv20160318_TRG_Calibrations pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -evout -hitfilt");
+  TString prodP13ibpp500RFF("DbV20130502 DbV20160318_EMC_Calibrations Dbv20160318_TRG_Calibrations pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt");
+  
+  //Run 12 pp200
+  TString prodP13ibpp200("DbV20130212 pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB useBTOF4Vtx beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt"); //options directy from page above
+                            
+  //Run17 pp 510 GeV - cross check                      
+  TString prodP18ibpp510("DbV20171001 pp2017a StiCA btof mtd mtdCalib PicoVtxDefault fmsDat fmsPoint fpsDat BEmcChkStat OSpaceZ2 OGridLeak3D -evout -hitfilt");  //options directy from page above
+  
 
   // Additional tags needed for embedding
   prodP13ibpp500RFF += " TpxClu -VFMinuit";
 
   //geometry  
   TString geomP13ib("ry2012a");
+  TString geomP18ib("ry2017a");
 
   TString chain1Opt("in,magF,tpcDb,NoDefault,TpxRaw,-ittf,NoOutput");
   TString chain2Opt("fzin,gen_T,geomT,sim_T,TpcRS,-ittf,-tpc_daq,nodefault");
@@ -51,7 +62,9 @@ void bfcMixer(const Int_t Nevents = 1,
 
   TString chain3Opt;   
   
-  if (prodName == "P13ibpp500RFF") { chain3Opt = prodP13ibpp500RFF; chain2Opt += geomP13ib; }
+  if(prodName == "P13ibpp500RFF") { chain3Opt = prodP13ibpp500RFF; chain2Opt += geomP13ib; }
+  else if(prodName == "P13ibpp200") { chain3Opt = prodP13ibpp200; chain2Opt += geomP13ib; }
+  else if(prodName == "P18ibpp510") { chain3Opt = prodP18ibpp510; chain2Opt += geomP18ib; }
   else
   {
    cout << "Choice prodName " << prodName << " does not correspond to known chain. Processing impossible." << endl;
@@ -60,10 +73,12 @@ void bfcMixer(const Int_t Nevents = 1,
 
   chain3Opt.Prepend(' ');
   chain3Opt.Prepend(DbVoption);
-  chain3Opt += ",Embedding,TpcMixer,GeantOut,MiniMcMk,McAna,-in,NoInput,useInTracker,nodefault"; 
+  chain3Opt += ",Embedding,TpcMixer,GeantOut,evout,MiniMcMk,McAna,-in,NoInput,useInTracker,nodefault"; 
   chain3Opt += ",";
 
-  if (prodName == "P13ibpp500RFF"){ chain3Opt += geomP13ib; }
+  if(prodName == "P13ibpp500RFF"){ chain3Opt += geomP13ib; }
+  else if(prodName == "P13ibpp200"){ chain3Opt += geomP13ib; }
+  else if(prodName == "P18ibpp510"){ chain3Opt += geomP18ib; }
   else
   {
     cout << "Choice prodName " << prodName << " does not correspond to known chain. Processing impossible. " << endl;
@@ -119,6 +134,7 @@ void bfcMixer(const Int_t Nevents = 1,
   Chain->cd();
   //________________________________________________________________________________
   StTpcMixerMaker  *mixer = (StTpcMixerMaker *) chain3->Maker("TpcMixer");
+  
   if( prodName == "P08icAuAu200")
 	{
 	  mixer->SetInput("Input1","MixerEvent");
@@ -126,13 +142,17 @@ void bfcMixer(const Int_t Nevents = 1,
   else
 	{
 	  mixer->SetInput("Input1","TpxRaw/.data/Event");
-        }
+  }
 
-  if (chain2Opt.Contains("TpcRS",TString::kIgnoreCase)) {
+  if (chain2Opt.Contains("TpcRS",TString::kIgnoreCase))
+  {
     mixer->SetInput("Input2","TpcRS/Event");
-  } else {
+  }
+  else
+  {
     mixer->SetInput("Input2","Trs/.const/Event");
   }
+  
   Chain->cd();
 
   //------------------------------------ EMC MIXERS ------------------------------------

@@ -6,22 +6,22 @@ echo $submitdir
 prodId=`date +%F_%H-%M`
 
 #low number of events for testing
-nevents=100
+nevents=1000
 
 energy=510 #collisions energy
 
 random=$RANDOM
 
-config="pp:minbiasLambda"
-#config="pp:dmeson"
-#config="pp:dmesontune"
-#config="pp:dmesontune_new"
+#config="pp:minbiasLambda"
+#config="pp:minbiasDiLambda"
+#config="pp:minbiasDiLambdaBar"
+config="pp:minbiasLambdaLambdaBar"
 
 #for output file name in xml file
-tune="minbiasLambda"
-#tune="dmeson"
-#tune="dmesontune"
-#tune="dmesontune_new"
+#tune="minbiasLambda"
+#tune="minbiasDiLambda"
+#tune="minbiasDiLambdaBar"
+tune="minbiasLambdaLambdaBar"
 
 mkdir -p ./SubmitInfo/
 

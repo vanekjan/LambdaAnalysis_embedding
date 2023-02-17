@@ -23,6 +23,15 @@ StarPythia8* _pythia8;
 class StLambdaPiPFilter;
 StLambdaPiPFilter *sngLambdaPiPFilter = 0;
 
+class StDiLambdaPiPFilter;
+StDiLambdaPiPFilter *diLambdaPiPFilter = 0;
+
+class StDiLambdaBarPiPFilter;
+StDiLambdaBarPiPFilter *diLambdaBarPiPFilter = 0;
+
+class StL_LbarPiPFilter;
+StL_LbarPiPFilter *LambdaLambdaBarPiPFilter = 0;
+
 Float_t ptHatMin = 0;
 Float_t ptHatMax = 128;
 
@@ -102,7 +111,7 @@ void Pythia8( TString config="pp:W", Int_t collEnergy = 200)
 
   }
     
-  if ( config=="pp:minbiasLambda")
+  if ( config=="pp:minbiasLambda" ||  config=="pp:minbiasDiLambda" ||  config=="pp:minbiasDiLambdaBar" ||  config=="pp:minbiasLambdaLambdaBar")
   {
     pythia8->Set("SoftQCD:minBias = on");
 
@@ -130,7 +139,17 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   gROOT->ProcessLine(".L bfc.C");
   {
     //TString simple = "y2014x geant gstar usexgeom agml sdt20140530 DbV20150316 misalign ";
-    TString simple = "y2017 geant gstar usexgeom agml ";
+    TString simple;
+    
+    if(collEnergy == 510) simple = "y2017 geant gstar usexgeom agml ";
+    else if(collEnergy == 200) simple = "y2012 geant gstar usexgeom agml ";
+    else
+    {
+      cout<<"Invalid collisions energy!"<<endl;
+      
+      return;    
+    }
+    
     //TString simple = "tables nodefault";
     bfc(0, simple );
   }
@@ -174,8 +193,24 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   //
   //  StarPrimaryMaker *
   _primary = new StarPrimaryMaker();
-  {
-    if(config.Contains("minbiasLambda"))
+  {    
+     
+    if(config.Contains("minbiasDiLambdaBar"))
+    {
+      _primary->SetFileName("./output_starsim/pythia8.minbiasDiLambdaBar.starsim.root");
+    }
+    
+    else if(config.Contains("minbiasDiLambda"))
+    {
+      _primary->SetFileName("./output_starsim/pythia8.minbiasDiLambda.starsim.root");
+    }
+    
+    else if(config.Contains("minbiasLambdaLambdaBar"))
+    {
+      _primary->SetFileName("./output_starsim/pythia8.minbiasLambdaLambdaBar.starsim.root");
+    }
+    
+    else if(config.Contains("minbiasLambda"))
     {
       _primary->SetFileName("./output_starsim/pythia8.minbiasLambda.starsim.root");
     }
@@ -199,7 +234,54 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   //
   //  filter = new StDijetFilter();
 
-  if(config.Contains("minbiasLambda")) 
+  
+  
+  if(config.Contains("minbiasDiLambdaBar")) 
+  {
+    diLambdaBarPiPFilter = new StDiLambdaBarPiPFilter();
+    //StDiLambdaBarPiPFilter::SetDauKine(double ptMin1, double ptMax1, double etaMin1, double etaMax1, double phiMin1, double phiMax1, double ptMin2, double ptMax2, double etaMin2, double etaMax2, double phiMin2, double phiMax2)
+    //diLambdaBarPiPFilter->SetDauKine(0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi(), 0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi()); //analysis cuts
+    diLambdaBarPiPFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
+    diLambdaBarPiPFilter->SetParentRapidities(-1, 1, -1, 1); //setter for mother rapidities (Lambda and Lambda-bar)
+
+    _primary->AddFilter( diLambdaBarPiPFilter );
+    _primary->SetAttr("FilterKeepAll",    int(0));
+    //_primary->SetAttr("FilterKeepHeader", int(0));
+    //_primary->SetAttr("Debug", int(1));
+    //_primary->SetAttr("FilterSkipRejects",    int(1)); //accept events which do not pass filter - for testing
+  }
+  
+  else if(config.Contains("minbiasDiLambda")) 
+  {
+    diLambdaPiPFilter = new StDiLambdaPiPFilter();
+    //StDiLambdaPiPFilter::SetDauKine(double ptMin1, double ptMax1, double etaMin1, double etaMax1, double phiMin1, double phiMax1, double ptMin2, double ptMax2, double etaMin2, double etaMax2, double phiMin2, double phiMax2)
+    //diLambdaPiPFilter->SetDauKine(0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi(), 0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi()); //analysis cuts
+    diLambdaPiPFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
+    diLambdaPiPFilter->SetParentRapidities(-1, 1, -1, 1); //setter for mother rapidities (Lambda and Lambda-bar)
+
+    _primary->AddFilter( diLambdaPiPFilter );
+    _primary->SetAttr("FilterKeepAll",    int(0));
+    //_primary->SetAttr("FilterKeepHeader", int(0));
+    //_primary->SetAttr("Debug", int(1));
+    //_primary->SetAttr("FilterSkipRejects",    int(1)); //accept events which do not pass filter - for testing
+  }
+  
+  else if(config.Contains("minbiasLambdaLambdaBar")) 
+  {
+    LambdaLambdaBarPiPFilter = new StL_LbarPiPFilter();
+    //StL_LbarPiPFilter::SetDauKine(double ptMin1, double ptMax1, double etaMin1, double etaMax1, double phiMin1, double phiMax1, double ptMin2, double ptMax2, double etaMin2, double etaMax2, double phiMin2, double phiMax2)
+    //LambdaLambdaBarPiPFilter->SetDauKine(0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi(), 0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi()); //analysis cuts
+    LambdaLambdaBarPiPFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
+    LambdaLambdaBarPiPFilter->SetParentRapidities(-1, 1, -1, 1); //setter for mother rapidities (Lambda and Lambda-bar)
+
+    _primary->AddFilter( LambdaLambdaBarPiPFilter );
+    _primary->SetAttr("FilterKeepAll",    int(0));
+    //_primary->SetAttr("FilterKeepHeader", int(0));
+    //_primary->SetAttr("Debug", int(1));
+    //_primary->SetAttr("FilterSkipRejects",    int(1)); //accept events which do not pass filter - for testing
+  }
+  
+  else if(config.Contains("minbiasLambda")) 
   {
     sngLambdaPiPFilter = new StLambdaPiPFilter();
     //StLambdaPiPFilter::SetDauKine(double ptMin1, double ptMax1, double etaMin1, double etaMax1, double phiMin1, double phiMax1, double ptMin2, double ptMax2, double etaMin2, double etaMax2, double phiMin2, double phiMax2)
@@ -258,9 +340,33 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   //
   _primary -> Init();
 
-  geometry("y2017");
+  if(collEnergy == 510) geometry("y2017a");
+  if(collEnergy == 200) geometry("y2012a");
+  
   command("gkine -4 0");
-  command("gfile o ./output_starsim/pythia8.starsim.fzd");
+  
+     
+  if(config.Contains("minbiasDiLambdaBar"))
+  {
+    command("gfile o ./output_starsim/pythia8.minbiasDiLambdaBar.starsim.fzd");
+  }
+  
+  else if(config.Contains("minbiasDiLambda"))
+  {
+   command("gfile o ./output_starsim/pythia8.minbiasDiLambda.starsim.fzd");
+  }
+  
+  else if(config.Contains("minbiasLambdaLambdaBar"))
+  {
+    command("gfile o ./output_starsim/pythia8.minbiasLambdaLambdaBar.starsim.fzd");
+  }
+  
+  else if(config.Contains("minbiasLambda"))
+  {
+    command("gfile o ./output_starsim/pythia8.minbiasLambda.starsim.fzd");
+  }
+  
+  
   
   
   

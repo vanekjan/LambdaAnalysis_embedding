@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job nProcesses="1" simulateSubmission="false">
+<job nProcesses="5" simulateSubmission="false">
     <command>
 
         @ seed = &random; + $JOBINDEX
@@ -9,6 +9,9 @@
         mkdir output_starsim
 
         root4star -b -q starsim.C\(&nevents;,&energy;,$seed,\"&config;\"\) > $JOBID.log
+        
+        mv ./output_starsim/pythia8.&tune;.starsim.root ./output_starsim/pythia8.&tune;_$JOBINDEX.starsim.root
+        mv ./output_starsim/pythia8.&tune;.starsim.fzd ./output_starsim/pythia8.&tune;_$JOBINDEX.starsim.fzd
 
     </command>
     
