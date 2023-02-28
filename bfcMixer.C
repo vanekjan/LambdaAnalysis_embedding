@@ -46,7 +46,8 @@ void bfcMixer(const Int_t Nevents = 1,
   TString prodP13ibpp200("DbV20130212 pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB useBTOF4Vtx beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt"); //options directy from page above
                             
   //Run17 pp 510 GeV - cross check                      
-  TString prodP18ibpp510("DbV20171001 pp2017a StiCA btof mtd mtdCalib PicoVtxDefault fmsDat fmsPoint fpsDat BEmcChkStat OSpaceZ2 OGridLeak3D -evout -hitfilt");  //options directy from page above
+  //TString prodP18ibpp510("DbV20171001 pp2017a StiCA btof mtd mtdCalib PicoVtxDefault fmsDat fmsPoint fpsDat BEmcChkStat OSpaceZ2 OGridLeak3D -hitfilt");  //options directy from page above
+  TString prodP18ibpp510("DbV20171001 pp2017a StiCA btof PicoVtxDefault fmsDat fmsPoint fpsDat BEmcChkStat OSpaceZ2 OGridLeak3D -hitfilt");  //changed for L analysis
   
 
   // Additional tags needed for embedding

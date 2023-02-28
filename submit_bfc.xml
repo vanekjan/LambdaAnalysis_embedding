@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job nProcesses="1" simulateSubmission="false">
+<job maxFilesPerProcess="1" fileListSyntax="paths" copyInputLocally="false" simulateSubmission="false">
     <command>
 
         starver DEV
         
-        root4star -b -q bfcMixer.C\(&nevents;,\"&daqfile;\",\"&fzdfile;\",\"&config;\"\) > $JOBID.log
+        mkdir bfc_input
+        
+        cp &daqfile; ./bfc_input/input.daq
+        cp $INPUTFILE0 ./bfc_input/pythia8.starsim.fzd
+        
+        root4star -b -q bfcMixer.C\(&nevents;,\"./bfc_input/input.daq\",\"./bfc_input/pythia8.starsim.fzd\",\"&config;\"\) > $JOBID.log
 
     </command>
     
     <stdout URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.out" />
     <stderr URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.err" />
-    <output fromScratch="*.root"   toURL="file:&submitdir;/production/bfc/&productionId;/" />
+    <output fromScratch="pythia8.event.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.event.root" />
+    <output fromScratch="pythia8.geant.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.geant.root" />
+    <output fromScratch="pythia8.MuDst.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.MuDst.root" />
+    <output fromScratch="pythia8.minimc.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.minimc.root" />
     <output fromScratch="*.log"    toURL="file:&submitdir;/jobs/bfc/&productionId;/"/>
 
     <SandBox>
         <Package>
-            <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfc_input</File>
             <File>file:/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfcMixer.C</File>
         </Package>
     </SandBox>
+    
+    <input URL="filelist:&submitdir;/&mFileList;"/>
 
     <Generator>
         <Location>&submitdir;/SubmitInfo</Location>
