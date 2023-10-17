@@ -8,8 +8,8 @@ prodId=`date +%F_%H-%M`
 #low number of events for testing
 nevents=1000
 
-#energy=200 #collisions energy
-energy=510 #collisions energy
+energy=200 #collisions energy
+#energy=510 #collisions energy
 
 random=$RANDOM
 

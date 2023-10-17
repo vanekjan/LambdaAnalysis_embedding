@@ -2,7 +2,7 @@
 <job maxFilesPerProcess="1" fileListSyntax="paths" copyInputLocally="false" simulateSubmission="false">
     <command>
 
-        starver DEV
+        starver SL12d_embed
         
         mkdir bfc_input
         

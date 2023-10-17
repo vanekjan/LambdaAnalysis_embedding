@@ -1,6 +1,9 @@
 #!/bin/bash
 
-starver DEV
+#starver DEV
+#starver SL21d
+starver SL12d_embed
+#starver SL12d
 
 rm ./log/bfc.log
 

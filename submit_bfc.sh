@@ -10,11 +10,12 @@ nevents=1000
 mkdir -p ./SubmitInfo/
 
 #config="P13ibpp500RFF" #Run12 pp500
-#config="P13ibpp200" #Run12 pp200
-config="P18ibpp510"    #Run17 pp510
+config="P12idpp200" #Run12 pp200
+#config="P18ibpp510"    #Run17 pp510
 
 #old file from Zilong
-daqfile="/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfc_input/st_zerobias_adc_13078014_raw_1600001.daq"
+#daqfile="/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfc_input/st_zerobias_adc_13078014_raw_1600001.daq"
+daqfile="/star/u/vanekjan/pwg/vanekjan/ppEmbedding/Lambda_PYTHIA_pp/bfc_input/Run12_200/st_zerobias_adc_13057005_raw_1600001.daq"
 
 
 echo "output directories"

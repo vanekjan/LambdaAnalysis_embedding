@@ -3,7 +3,7 @@
 // To use it do
 //  root4star starsim.C
 
-const bool GEANT_HANDLES_DECAYS = true;
+const bool GEANT_HANDLES_DECAYS = false;
 
 class St_geant_Maker;
 St_geant_Maker *geant_maker = 0;
@@ -30,7 +30,10 @@ class StDiLambdaBarPiPFilter;
 StDiLambdaBarPiPFilter *diLambdaBarPiPFilter = 0;
 
 class StL_LbarPiPFilter;
-StL_LbarPiPFilter *LambdaLambdaBarPiPFilter = 0;
+//StL_LbarPiPFilter *LambdaLambdaBarPiPFilter = 0;
+
+class StL_LbarPiPFilter_simple;
+StL_LbarPiPFilter_simple *LambdaLambdaBarPiPFilter = 0;
 
 Float_t ptHatMin = 0;
 Float_t ptHatMax = 128;
@@ -268,10 +271,11 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   
   else if(config.Contains("minbiasLambdaLambdaBar")) 
   {
-    LambdaLambdaBarPiPFilter = new StL_LbarPiPFilter();
+    //LambdaLambdaBarPiPFilter = new StL_LbarPiPFilter();
+    LambdaLambdaBarPiPFilter = new StL_LbarPiPFilter_simple();
     //StL_LbarPiPFilter::SetDauKine(double ptMin1, double ptMax1, double etaMin1, double etaMax1, double phiMin1, double phiMax1, double ptMin2, double ptMax2, double etaMin2, double etaMax2, double phiMin2, double phiMax2)
     //LambdaLambdaBarPiPFilter->SetDauKine(0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi(), 0.15, 20., -1, 1, -TMath::Pi(), TMath::Pi()); //analysis cuts
-    LambdaLambdaBarPiPFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
+    //LambdaLambdaBarPiPFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
     LambdaLambdaBarPiPFilter->SetParentRapidities(-1, 1, -1, 1); //setter for mother rapidities (Lambda and Lambda-bar)
 
     _primary->AddFilter( LambdaLambdaBarPiPFilter );

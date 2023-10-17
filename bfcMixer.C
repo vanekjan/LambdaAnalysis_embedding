@@ -27,10 +27,11 @@ StBFChain* chain3 = 0;
 
 //_____________________________________________________________________
 void bfcMixer(const Int_t Nevents = 1,
-		  const Char_t* daqfile = "./bfc_input/st_zerobias_adc_13078014_raw_1600001.daq",
-		  const Char_t* fzdfile = "./bfc_input/pythia8.starsim.fzd",
+		  //const Char_t* daqfile = "./bfc_input/st_zerobias_adc_13078014_raw_1600001.daq",
+		  const Char_t* daqfile = "./bfc_input/Run12_200/st_zerobias_adc_13057005_raw_1600001.daq",
+		  const Char_t* fzdfile = "./bfc_input/pythia8.minbiasLambdaLambdaBar.starsim.fzd",
 //		  const Char_t* fzdfile = "output/13078014/pt3_4_st_zerobias_adc_13078014_raw_2570001_2.fzd",
-		  const Char_t* prodName = "P13ibpp500RFF",
+		  const Char_t* prodName = "P12idpp200",
 		  const Char_t* DbVoption = "")
 {
    
@@ -42,8 +43,11 @@ void bfcMixer(const Int_t Nevents = 1,
   //TString prodP13ibpp500RFF("DbV20130502 DbV20160318_EMC_Calibrations Dbv20160318_TRG_Calibrations pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -evout -hitfilt");
   TString prodP13ibpp500RFF("DbV20130502 DbV20160318_EMC_Calibrations Dbv20160318_TRG_Calibrations pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt");
   
+  
+  
   //Run 12 pp200
-  TString prodP13ibpp200("DbV20130212 pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB useBTOF4Vtx beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt"); //options directy from page above
+  //TString prodP13ibpp200("DbV20130212 pp2012b Sti AgML mtdDat btof fmsDat VFPPVnoCTB useBTOF4Vtx beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt"); //options directy from page above
+  TString prodP12idpp200("DbV20130212 DbV20160506_EMC_Calibrations pp2012b Sti mtdDat btof fmsDat VFPPVnoCTB useBTOF4Vtx beamline BEmcChkStat Corr4 OSpaceZ2 OGridLeak3D -hitfilt");//options from Dima
                             
   //Run17 pp 510 GeV - cross check                      
   //TString prodP18ibpp510("DbV20171001 pp2017a StiCA btof mtd mtdCalib PicoVtxDefault fmsDat fmsPoint fpsDat BEmcChkStat OSpaceZ2 OGridLeak3D -hitfilt");  //options directy from page above
@@ -52,8 +56,10 @@ void bfcMixer(const Int_t Nevents = 1,
 
   // Additional tags needed for embedding
   prodP13ibpp500RFF += " TpxClu -VFMinuit";
+  prodP12idpp200 += " TpxClu -VFMinuit";
 
-  //geometry  
+  //geometry 
+  TString geomP12id("ry2012a"); 
   TString geomP13ib("ry2012a");
   TString geomP18ib("ry2017a");
 
@@ -64,7 +70,7 @@ void bfcMixer(const Int_t Nevents = 1,
   TString chain3Opt;   
   
   if(prodName == "P13ibpp500RFF") { chain3Opt = prodP13ibpp500RFF; chain2Opt += geomP13ib; }
-  else if(prodName == "P13ibpp200") { chain3Opt = prodP13ibpp200; chain2Opt += geomP13ib; }
+  else if(prodName == "P12idpp200") { chain3Opt = prodP12idpp200; chain2Opt += geomP12id; }
   else if(prodName == "P18ibpp510") { chain3Opt = prodP18ibpp510; chain2Opt += geomP18ib; }
   else
   {
@@ -78,20 +84,20 @@ void bfcMixer(const Int_t Nevents = 1,
   chain3Opt += ",";
 
   if(prodName == "P13ibpp500RFF"){ chain3Opt += geomP13ib; }
-  else if(prodName == "P13ibpp200"){ chain3Opt += geomP13ib; }
+  else if(prodName == "P12idpp200"){ chain3Opt += geomP12id; }
   else if(prodName == "P18ibpp510"){ chain3Opt += geomP18ib; }
   else
   {
     cout << "Choice prodName " << prodName << " does not correspond to known chain. Processing impossible. " << endl;
     return;
   }
-
+  
   // Add BEMC simulators to chain
   chain3Opt += ",emcSim";
 
   // Add EEMC fast simulator to chain
   chain3Opt += ",EEfs";
-
+     
   // Dynamically link some shared libs
   gROOT->LoadMacro("bfc.C");
   if (gClassTable->GetID("StBFChain") < 0) Load();
@@ -172,7 +178,7 @@ void bfcMixer(const Int_t Nevents = 1,
   // Add EEMC mixer to chain3
   StEEmcMixerMaker* eemcMixer = new StEEmcMixerMaker;
   //------------------------------------------------------------------------------------
-/*
+
   //----------------------------- TRIGGER FILTER -----------------------------
   // We want to achieve the following ordering for makers:
   // 1. BBC simulator
@@ -190,6 +196,7 @@ void bfcMixer(const Int_t Nevents = 1,
   chain3->AddAfter("eefs",chain3->GetMaker("tpcChain"));
   chain3->AddAfter("eefs",eemcMixer);
   chain3->AddAfter("eefs",eess);
+   
 
   // Place Pythia maker after GEANT maker
   // and trigger filter after EMC makers
@@ -197,7 +204,7 @@ void bfcMixer(const Int_t Nevents = 1,
   gSystem->Load("StTriggerUtilities");
   gSystem->Load("StJetSkimEvent");
   gSystem->Load("StBfcTriggerFilterMaker");
-  
+ 
   StPythiaEventMaker* pythia = new StPythiaEventMaker;
   TString pyfile = gSystem->BaseName(fzdfile);
   pyfile.ReplaceAll(".fzd",".pythia.root");
@@ -214,7 +221,7 @@ void bfcMixer(const Int_t Nevents = 1,
   trgsim->useEemc();
   trgsim->eemc->setSource("StEvent");
   // set up trigger thresholds for 2012 pp510
-  
+ 
   trgsim->setBarrelJetPatchTh(0,28);
   trgsim->setBarrelJetPatchTh(1,36);
   trgsim->setBarrelJetPatchTh(2,66);
@@ -234,13 +241,15 @@ void bfcMixer(const Int_t Nevents = 1,
 
   trgsim->setEndcapHighTowerTh(0, 25);
   trgsim->setEndcapHighTowerTh(1, 31);
-  
+
   //no trigger filter
   StBfcTriggerFilterMaker* trgfilt = new StBfcTriggerFilterMaker;
   //The BFC trigger filter will select only JP0 events
-  trgfilt->SetJP0();
+  //trgfilt->SetJP0();
+  trgfilt->SetOkAllEvents(1);
   chain3->AddBefore("tpcChain",trgsim);
   chain3->AddBefore("tpcChain",trgfilt);
+
   // Move these makers after trigger decision
   // *** VERY IMPORTANT ***
   // The order of TpxRaw and TpcRS *must* be preserved
@@ -251,11 +260,13 @@ void bfcMixer(const Int_t Nevents = 1,
   chain3->AddBefore("TpcMixer",TpxRaw);
   chain3->AddBefore("TpcMixer",TpcRS);
   //--------------------------------------------------------------------------
+
   TString trgfile = gSystem->BaseName(fzdfile);
   trgfile.ReplaceAll(".fzd",".trig.root");
   trgfile.ReplaceAll("output_starsim","output_bfc");
   TFile* ofile = TFile::Open(trgfile,"recreate");
   assert(ofile);
+  
   TH2F* hBarrelHighTowerSimu = new TH2F("hBarrelHighTowerSimu","BEMC high tower simu;trigger patch;high tower",300,0,300,64,0,64);
   TH2F* hBarrelPatchSumSimu = new TH2F("hBarrelPatchSumSimu","BEMC patch sum simu;trigger patch;patch sum",300,0,300,64,0,64);
   TH2F* hEndcapHighTowerSimu = new TH2F("hEndcapHighTowerSimu","EEMC high tower simu;trigger patch;high tower",90,0,90,64,0,64);
@@ -264,7 +275,7 @@ void bfcMixer(const Int_t Nevents = 1,
   TH2F* hEndcapJetPatchSimu = new TH2F("hEndcapJetPatchSimu","EEMC jet patch;jet patch;adc",6,0,6,160,0,160);
   TH2F* hOverlapJetPatchSimu = new TH2F("hOverlapJetPatchSimu","BEMC-EEMC-overlap;jet patch;adc",6,0,6,160,0,160);
   //--------------------------------------------------------------------------
-*/  
+
   // Initialize chain
   Chain->Init();
   PrintTimer(Chain);
