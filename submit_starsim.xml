@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job nProcesses="10" simulateSubmission="false">
+<job nProcesses="1000" simulateSubmission="false">
     <command>
 
         @ seed = &random; + $JOBINDEX
@@ -15,9 +15,12 @@
 
     </command>
     
-    <stdout URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.out" />
-    <stderr URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.err" />
+    <stdout URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.out" /> 
+    <stderr URL="file:&submitdir;/jobs/starsim/&productionId;/sched$JOBID.err" />  
+<!--    <stdout URL="file:/star/u/vanekjan/temp/log/sched$JOBID.out" />
+    <stderr URL="file:/star/u/vanekjan/temp/log/sched$JOBID.err" /> -->
     <output fromScratch="./output_starsim/*.starsim.fzd"   toURL="file:&submitdir;/production/starsim/&productionId;/" />
+    <output fromScratch="./output_starsim/*.starsim.root"   toURL="file:&submitdir;/production/starsim/&productionId;/" /> 
     <output fromScratch="*.log"            toURL="file:&submitdir;/jobs/starsim/&productionId;/"/>
 
     <SandBox>

@@ -14,7 +14,9 @@
     </command>
     
     <stdout URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.out" />
-    <stderr URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.err" />
+    <stderr URL="file:&submitdir;/jobs/bfc/&productionId;/sched$JOBID.err" /> 
+<!--    <stdout URL="file:/star/u/vanekjan/temp/log/sched$JOBID.out" />
+    <stderr URL="file:/star/u/vanekjan/temp/log/sched$JOBID.err" /> -->
     <output fromScratch="pythia8.event.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.event.root" />
     <output fromScratch="pythia8.geant.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.geant.root" />
     <output fromScratch="pythia8.MuDst.root"   toURL="file:&submitdir;/production/bfc/&productionId;/out_$JOBID.MuDst.root" />

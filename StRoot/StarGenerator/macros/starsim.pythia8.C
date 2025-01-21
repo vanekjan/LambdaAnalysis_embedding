@@ -3,7 +3,7 @@
 // To use it do
 //  root4star starsim.C
 
-const bool GEANT_HANDLES_DECAYS = false;
+const bool GEANT_HANDLES_DECAYS = true;
 
 class St_geant_Maker;
 St_geant_Maker *geant_maker = 0;
@@ -34,6 +34,9 @@ class StL_LbarPiPFilter;
 
 class StL_LbarPiPFilter_simple;
 StL_LbarPiPFilter_simple *LambdaLambdaBarPiPFilter = 0;
+
+class StProtonPionPairLMassFilter;
+StProtonPionPairLMassFilter *ProtonPionPairLMassFilter = 0;
 
 Float_t ptHatMin = 0;
 Float_t ptHatMax = 128;
@@ -100,7 +103,8 @@ void Pythia8( TString config="pp:W", Int_t collEnergy = 200)
   if ( config=="pp:minbias" )
   {
 
-    pythia8->Set("HardQCD:all = on");
+    //pythia8->Set("HardQCD:all = on");
+    pythia8->Set("SoftQCD:minBias = on");
 
   }
   
@@ -114,7 +118,7 @@ void Pythia8( TString config="pp:W", Int_t collEnergy = 200)
 
   }
     
-  if ( config=="pp:minbiasLambda" ||  config=="pp:minbiasDiLambda" ||  config=="pp:minbiasDiLambdaBar" ||  config=="pp:minbiasLambdaLambdaBar")
+  if ( config=="pp:minbiasLambda" ||  config=="pp:minbiasDiLambda" ||  config=="pp:minbiasDiLambdaBar" ||  config=="pp:minbiasLambdaLambdaBar" || config=="pp:minbiasProtonPionPair")
   {
     pythia8->Set("SoftQCD:minBias = on");
 
@@ -215,7 +219,15 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
     
     else if(config.Contains("minbiasLambda"))
     {
-      _primary->SetFileName("./output_starsim/pythia8.minbiasLambda.starsim.root");
+      _primary->SetFileName("./output_starsim/pythia8.minbiasLambda.starsim.root"); 
+    }
+    else if(config.Contains("minbiasProtonPionPair"))
+    {
+      _primary->SetFileName("./output_starsim/pythia8.minbiasProtonPionPair.starsim.root"); 
+    }
+    else if(config.Contains("minbias"))
+    {
+      _primary->SetFileName("./output_starsim/pythia8.minbias.starsim.root"); 
     }
     //_primary -> SetVertex( 0.1, -0.1, 0.0 );
     //_primary -> SetSigma ( 0.1,  0.1, 30.0 );
@@ -299,12 +311,26 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
     //_primary->SetAttr("Debug", int(1));
     //_primary->SetAttr("FilterSkipRejects",    int(1)); //accept events which do not pass filter - for testing
   }
+  
+  else if(config.Contains("minbiasProtonPionPair")) 
+  {
+    ProtonPionPairLMassFilter = new StProtonPionPairLMassFilter();
+
+    //ProtonPionPairLMassFilter->SetDauKine(0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi(), 0., 1e6, -100, 100, -TMath::Pi(), TMath::Pi()); //open cuts for check of acceptance effect
+    ProtonPionPairLMassFilter->SetParentRapidities(-1, 1); //setter for p-pi pair rapidity
+
+    _primary->AddFilter( ProtonPionPairLMassFilter );
+    _primary->SetAttr("FilterKeepAll",    int(0));
+    //_primary->SetAttr("FilterKeepHeader", int(0));
+    //_primary->SetAttr("Debug", int(1));
+    //_primary->SetAttr("FilterSkipRejects",    int(1)); //accept events which do not pass filter - for testing
+  }
 
   // If set to 1, tracks will be saved in the tree on events which were
   // rejected.  If the tree size is too big (because the filter is too
   // powerful) you may want to set this equal to zero.  In which case
   // only header information is saved for the event.
-
+  //_primary->SetAttr("FilterKeepHeader", int(0));
 
   // By default, the primary maker enters an infinite loop and executes
   // the event generator until it yields an event which passes the filter.
@@ -368,6 +394,14 @@ void starsim( Int_t nevents=10, Int_t collEnergy = 510, UInt_t rngSeed = 12345, 
   else if(config.Contains("minbiasLambda"))
   {
     command("gfile o ./output_starsim/pythia8.minbiasLambda.starsim.fzd");
+  }
+  else if(config.Contains("minbiasProtonPionPair"))
+  {
+    command("gfile o ./output_starsim/pythia8.minbiasProtonPionPair.starsim.fzd");
+  }
+  else if(config.Contains("minbias"))
+  {
+    command("gfile o ./output_starsim/pythia8.minbias.starsim.fzd");
   }
   
   

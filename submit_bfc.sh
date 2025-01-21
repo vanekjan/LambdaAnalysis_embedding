@@ -5,6 +5,7 @@ echo $submitdir
 
 prodId=`date +%F_%H-%M`
 
+#nevents=100
 nevents=1000
 
 mkdir -p ./SubmitInfo/
